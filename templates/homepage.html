@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Course Advisor</title>
+	<script src="../static/js/jQuery.js"></script>
+	<link href="../static/homepage.css" rel="stylesheet">
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+	<script>
+        $(function() {
+            $('#btnsinglecourse').click(function() {
+                console.log("Calling server");
+                $.ajax({
+                    url: '/singlecourse',
+                    data: $('#form1').serialize(),
+                    type: 'GET',
+                    success: function(response) {
+                        $('#activityarea').html('');
+						$('#activityarea').html(JSON.stringify(response, null, 2));
+                    },
+                    error: function(error) {
+						$('#activityarea').html(error);
+                    }
+                });
+            });
+
+			$('#btnmultiplecourses').click(function() {
+                console.log("Calling server");
+                $.ajax({
+                    url: '/multiplecourses',
+                    data: $('#form2').serialize(),
+                    type: 'GET',
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+        });
+    </script>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="jumbotron">
+            <h1>Course Advisor</h1>
+        </div>
+
+        <div class="row marketing">
+            <div class="col-lg-6">
+                <h4>Choose a course:</h4>
+				<form id="form1">
+				  <fieldset class="form-group">
+				    <label for="courseNumber">Course Number</label>
+				    <input name="courseNumber" type="courseNumber" class="form-control" id="courseNumber" placeholder="Enter Course Number">
+				  </fieldset>
+				  <button id="btnsinglecourse" type="button" class="btn btn-primary">Submit</button>
+				 </form>
+            </div>
+
+            <div class="col-lg-6">
+                <h4>Choose a combination of 3 courses:</h4>
+				<form id="form2">
+				  <fieldset class="form-group">
+				    <label for="courseNumber1">Course Number 1</label>
+				    <input name="courseNumber1" type="courseNumber1" class="form-control" id="courseNumber1" placeholder="Enter Course Number1">
+
+					<label for="courseNumber2">Course Number 2</label>
+				    <input name="courseNumber2" type="courseNumber2" class="form-control" id="courseNumber2" placeholder="Enter Course Number2">
+
+					<label for="courseNumber3">Course Number 3</label>
+				    <input name="courseNumber3" type="courseNumber3" class="form-control" id="courseNumber3" placeholder="Enter Course Number3">
+				  </fieldset>
+				  <button id="btnmultiplecourses" type="button" class="btn btn-primary">Submit</button>
+				 </form>
+            </div>
+        </div>
+		<div id="activityarea">
+
+		</div>
+
+        <footer class="footer">
+            <p>&copy; Company 2016</p>
+        </footer>
+
+    </div>
+</body>
+
+</html>

@@ -26,11 +26,10 @@ google = oauth.remote_app(
 # MySQL configurations
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'BucketList'
+app.config['MYSQL_DB'] = 'courseadvisor'
 app.config['MYSQL_HOST'] = 'localhost'
 
 mysql = MySQL(app)
-
 
 @app.route("/")
 def index():
@@ -53,26 +52,8 @@ def index():
         return res.read()
 
     userInfo = res.read()
-    return updateDB(json.loads(userInfo))
-
-
-def updateDB(userInfo):
-    _email  = userInfo['email']
-    _name   = userInfo['name']
-
-    if _name and _email:
-        conn = mysql.connection
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM student WHERE name='%s'" % (_name))
-        data = cur.fetchall()
-
-        if len(data) is 0:
-            cur.execute("""INSERT INTO student (name, email) VALUES (%s, %s);""", (_name, _email))
-            conn.commit()
-            return json.dumps({'message':'User created successfully !'})
-    else:
-        return json.dumps({'html':'<span>Enter the required fields</span>'})
-
+    updateDB(json.loads(userInfo))
+    return render_template('homepage.html')
 
 
 @app.route('/login')
@@ -94,12 +75,83 @@ def get_access_token():
 
 @app.route('/singlecourse', methods=['GET'])
 def getCourseInfo():
-    return json.dumps({'course':'<span>'+request.args.get('course')+'</span>'})
-
+    try:
+        courseNumber = request.args.get('courseNumber')
+        return json.dumps({'course' : str(getCourseInfoFromDB(courseNumber))})
+    except Exception as e:
+        return json.dumps({'status':'Bad Request', 'reason' : e})
 
 @app.route('/multiplecourses', methods=['GET'])
 def compareCourses():
-    return json.dumps({'course':'<span>'+request.args.get('course')+'</span>'})
+    try:
+        courseNumber1 = request.args.get('courseNumber1')
+        courseNumber2 = request.args.get('courseNumber2')
+        courseNumber3 = request.args.get('courseNumber3')
+        return json.dumps({'course' : str(getCoursesInfoFromDB(courseNumber1, courseNumber2, courseNumber3))})
+    except Exception as e:
+        return json.dumps({'status':'Bad Request', 'reason' : e})
+
+def getCoursesInfoFromDB(courseNumber1, courseNumber2, courseNumber3):
+    courseJson1 = getCourseInfoFromDB(courseNumber1)
+    courseJson2 = getCourseInfoFromDB(courseNumber2)
+    courseJson3 = getCourseInfoFromDB(courseNumber3)
+
+    return courseJson1['Easiness'] + courseJson2['Easiness'] + courseJson['Easiness']
+
+
+def getCourseInfoFromDB(courseNumber):
+    courseNumber = courseNumber.upper()
+    conn = mysql.connection
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM courses WHERE cnum='%s'" % (courseNumber))
+    data = cur.fetchall()[0]
+
+    courseJson = {}
+    courseJson['cnum'] = data[5]
+    courseJson['name'] = data[1]
+    courseJson['description'] = data[2]
+    courseJson['level'] = data[3]
+    courseJson['department'] = data[4]
+
+    cur1 = conn.cursor()
+    cur1.execute("SELECT rating.rid, mapping.cid, rating.easiness, rating.iRel, rating.tExp, rating.grade, rating.fun, rating.participation FROM rating INNER JOIN mapping ON rating.rid = mapping.rid WHERE mapping.cid = %s" % (data[0]))
+    averageData = cur1.fetchall()
+    params = [0.0] * 6
+    if len(averageData) >= 1:
+        for data in averageData:
+            for i, d in enumerate(data[2:]):
+                params[i] += d
+        params = [param / len(averageData) for param in params]
+
+    courseJson['Easiness'] = params[0]
+    courseJson['Industry Relevance'] = params[1]
+    courseJson['Time Expense'] = params[2]
+    courseJson['Grading'] = params[3]
+    courseJson['Overall Experience'] = params[4]
+    courseJson['Class Participation'] = params[5]
+
+    return courseJson
+
+
+def updateDB(userInfo):
+    _email  = userInfo['email']
+    _name   = userInfo['name']
+    _gender = userInfo['gender']
+
+    if _name and _email and _gender:
+        conn = mysql.connection
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM student WHERE name='%s'" % (_name))
+        data = cur.fetchall()
+
+        if len(data) is 0:
+            _gender = 1 if _gender == 'male' else 0
+            cur.execute("""INSERT INTO student (name, email, gender) VALUES (%s, %s, %s);""", (_name, _email, _gender))
+            conn.commit()
+            return {'message':'User created successfully !'}
+    else:
+        return json.dumps({'html':'<span>Enter the required fields</span>'})
+
 
 
 if __name__ == "__main__":
