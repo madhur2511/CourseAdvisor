@@ -77,7 +77,7 @@ def get_access_token():
 def getCourseInfo():
     try:
         courseNumber = request.args.get('courseNumber')
-        return json.dumps({'course' : str(getCourseInfoFromDB(courseNumber))})
+        return json.dumps(getCourseInfoFromDB(courseNumber))
     except Exception as e:
         return json.dumps({'status':'Bad Request', 'reason' : e})
 
@@ -87,7 +87,7 @@ def compareCourses():
         courseNumber1 = request.args.get('courseNumber1')
         courseNumber2 = request.args.get('courseNumber2')
         courseNumber3 = request.args.get('courseNumber3')
-        return json.dumps({'course' : str(getCoursesInfoFromDB(courseNumber1, courseNumber2, courseNumber3))})
+        return json.dumps(getCoursesInfoFromDB(courseNumber1, courseNumber2, courseNumber3))
     except Exception as e:
         return json.dumps({'status':'Bad Request', 'reason' : e})
 

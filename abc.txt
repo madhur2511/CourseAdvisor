@@ -1,0 +1,30 @@
+## Inspiration
+We were inspired by the periodic flurry of messages we see on college-specific social media accounts about course selections, and combinations, every quarter. Posting such queries on such informal portals often turn out to be worrisome and vestigial, instead, we try to structure these specific thoughts that students have about the courses they have taken, to help other students.
+
+## What it does
+Its a crowd-sourced, student-driven portal, which provides a structured and organized way of sharing your views on a particular course, get in touch with seniors from your college who have reviewed that course, and receive some help in your selection. But we don't just assume a passive role in the process.
+
+An important aspect of Course Advisor is that it understand you and your style. When you ask for its views on a particular combination of courses that you might be interested in, it would request you to provide details about your past courses, and based on your style, recommend other courses to you.
+
+An example can be taken when a student wants to take Operating Systems and Computer Architecture together and requests Course Advisor to help her with this decision. Course Advisor would crunch the numbers to provide stats on people who have taken this combination in the past and how well this combination suits you, depending on your history and preference with courses (by analyzing a global average difficulty for that combination against the threshold of difficulty that you like taking on in your courses).
+
+## How I built it
+Course Advisor is a webapp built on Flask web framework with Python on the back-end. Your data stays secure within a MySQL instance running locally and we show you the awesome Bootstrap based interface, which is again minimal to keep things simple. Signup and Signin is through Google-Auth 
+
+## Challenges I ran into
+Getting to run SQL Engine, Google Auth, and Flask together was a big challenge since Flask is infamous for being troublesome with 3rd -party authentication services.
+
+## Accomplishments that I'm proud of
+1. Solving the challenges listed above to get that very combination running.
+2. This idea was prototyped in about 30 hours after pondering over a couple more, so thats another thing we are proud of.
+
+## What I learned
+1. Its always better to focus your idea to a specific use case to start with and not be limited by the large picture every-time. 
+2. Trying out new, unknown tech can be real cool.
+
+## What's next for Course Advisor
+
+We strongly believe that we might have hit something with potential with this idea. The current app is very basic and a lot more sophistication is needed to make it appeal to students globally. Analytics is quite naive for this stage (almost embarrassing) and a lot more data than manually generated test data would be needed for some good results.
+
+If you are not embarrassed by the first version of your product, you’ve launched too late.     - Reid Hoffman
+

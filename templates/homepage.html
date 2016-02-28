@@ -5,10 +5,39 @@
     <title>Course Advisor</title>
 	<script src="../static/js/jQuery.js"></script>
 	<link href="../static/homepage.css" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
-	<script>
+    <script>
+    function drawBasic() {
+          var data = google.visualization.arrayToDataTable([
+            ['Parameter', 'Value'],
+            ['Class Participation', 1.75],
+            ['Grading', 2.5],
+            ['Industry Relevance', 3.5],
+            ['Overall Experience', 2.5],
+            ['Easiness', 4.0],
+            ['Time Expense', 2.25],
+          ]);
+
+          var options = {
+            title: 'Parameters for CSE250A',
+            chartArea: {width: '50%'},
+            colors: ['#428BCA'],
+            hAxis: {
+              title: 'Score',
+              minValue: 1
+            },
+            vAxis: {
+              title: 'Parameters'
+            }
+          };
+            var chart = new google.visualization.BarChart(document.getElementById('activityarea'));
+            chart.draw(data, options);
+        }
+
         $(function() {
+
             $('#btnsinglecourse').click(function() {
                 console.log("Calling server");
                 $.ajax({
@@ -16,16 +45,19 @@
                     data: $('#form1').serialize(),
                     type: 'GET',
                     success: function(response) {
+                        $('#activitytextarea').html('');
                         $('#activityarea').html('');
-						$('#activityarea').html(JSON.stringify(response, null, 2));
+                        $('#activitytextarea').html("<div><ul><li> <b>Probabilistic Reasoning and Learning </b></li><li> Course on learning about Probabilistic Theory and Decision Making </li><li> CSE Department </li></ul></div>");
+                        google.charts.load('current', {packages: ['corechart', 'bar']});
+                        google.charts.setOnLoadCallback(drawBasic);
                     },
                     error: function(error) {
-						$('#activityarea').html(error);
+                        $('#activityarea').html(error);
                     }
                 });
             });
 
-			$('#btnmultiplecourses').click(function() {
+            $('#btnmultiplecourses').click(function() {
                 console.log("Calling server");
                 $.ajax({
                     url: '/multiplecourses',
@@ -39,7 +71,6 @@
                     }
                 });
             });
-
         });
     </script>
 </head>
@@ -81,8 +112,11 @@
 				 </form>
             </div>
         </div>
-		<div id="activityarea">
 
+		<div id="activitytextarea">
+		</div>
+
+		<div id="activityarea">
 		</div>
 
         <footer class="footer">
@@ -90,6 +124,7 @@
         </footer>
 
     </div>
+
 </body>
 
 </html>
